@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Latin Curse Generator</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cinzel&display=swap");
+
+      body {
+        font-family: "Cinzel", serif;
+        text-align: center;
+        background-color: #0d0d0d;
+        color: #f5f5f5;
+        padding: 50px;
+        background-image: url("https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0");
+        background-size: cover;
+        background-blend-mode: darken;
+        background-position: center;
+        background-attachment: fixed;
+        animation: flickerBackground 5s infinite alternate;
+      }
+
+      @keyframes flickerBackground {
+        0% {
+          filter: brightness(0.6);
+        }
+        100% {
+          filter: brightness(0.8);
+        }
+      }
+
+      h1 {
+        font-size: 2.8em;
+        color: #ff0000;
+        text-shadow: 4px 4px 15px rgba(255, 0, 0, 0.9);
+      }
+
+      #curse {
+        font-size: 2em;
+        font-style: italic;
+        margin-top: 20px;
+        color: #bb2222;
+        text-shadow: 2px 2px 12px rgba(255, 0, 0, 0.8);
+        animation: glow 2s infinite alternate;
+      }
+
+      @keyframes glow {
+        0% {
+          text-shadow: 2px 2px 12px rgba(255, 0, 0, 0.6);
+        }
+        100% {
+          text-shadow: 3px 3px 15px rgba(255, 50, 50, 1);
+        }
+      }
+
+      #translation {
+        font-size: 1.5em;
+        margin-top: 10px;
+        color: #c0c0c0;
+      }
+
+      button {
+        background-color: #550000;
+        color: white;
+        font-size: 1.3em;
+        padding: 12px 24px;
+        border: none;
+        cursor: pointer;
+        margin: 10px;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+        font-weight: bold;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      }
+
+      button:hover {
+        background-color: #880000;
+        box-shadow: 0 0 25px rgba(255, 0, 0, 1);
+        transform: scale(1.1);
+      }
+
+      #nameInput {
+        background-color: #330000;
+        color: #f5f5f5;
+        border: 2px solid #770000;
+        padding: 10px;
+        font-size: 1.2em;
+        text-align: center;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+      }
+
+      #nameInput::placeholder {
+        color: #aa6666;
+      }
+      @keyframes glow {
+        0% {
+          text-shadow: 2px 2px 12px rgba(255, 0, 0, 0.6);
+        }
+        100% {
+          text-shadow: 3px 3px 15px rgba(255, 50, 50, 1);
+        }
+      }
+
+      @keyframes ghostlyFlicker {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      #mist {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 1000px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 0, 0, 0.2) 20%,
+          rgba(0, 0, 0, 0) 80%
+        );
+        opacity: 0;
+        animation: redMist 6s infinite alternate;
+        pointer-events: none;
+      }
+
+      @keyframes redMist {
+        0% {
+          opacity: 0.1;
+        }
+        100% {
+          opacity: 0.4;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Latin Curse Generator</h1>
+    <button onclick="generateCurse()">Random Curse</button>
+    <br /><br />
+    <input type="text" id="nameInput" placeholder="Enter a name" />
+    <button onclick="generateCurseForName()">Curse Someone</button>
+    <p id="curse"></p>
+    <p id="translation"></p>
+    <div id="mist"></div>
+
+    <script>
+      const curses = [
+        { latin: "Maledictus sis in aeternum!", english: "Be cursed forever!" },
+        {
+          latin: "Teneat te umbra noctis!",
+          english: "May the shadow of night hold you!",
+        },
+        {
+          latin: "Inferni te devorent!",
+          english: "May the underworld devour you!",
+        },
+        {
+          latin: "Lingua tua contabescat!",
+          english: "May your tongue wither away!",
+        },
+        {
+          latin: "Daemonia circumdent te!",
+          english: "May demons surround you!",
+        },
+        {
+          latin: "Non videas lumen iterum!",
+          english: "May you never see light again!",
+        },
+        {
+          latin: "Pedes tui numquam quiescant!",
+          english: "May your feet never find rest!",
+        },
+        {
+          latin: "Corpus tuum marcescat!",
+          english: "May your body wither away!",
+        },
+        {
+          latin: "Noctem aeternam patiaris!",
+          english: "May you endure eternal night!",
+        },
+        {
+          latin: "Vox tua sileat in perpetuum!",
+          english: "May your voice be silent forever!",
+        },
+        {
+          latin: "Umbrae infernales te rapiant!",
+          english: "May the infernal shadows take you!",
+        },
+        {
+          latin: "Fatum tuum sit damnatio!",
+          english: "May your fate be damnation!",
+        },
+        {
+          latin: "Maledictio perpetua super te!",
+          english: "A perpetual curse upon you!",
+        },
+        {
+          latin: "Oculi tui caecitate tegantur!",
+          english: "May your eyes be covered in blindness!",
+        },
+        {
+          latin: "Vita tua sit plena doloris!",
+          english: "May your life be full of suffering!",
+        },
+        {
+          latin: "Mors lente te sequatur!",
+          english: "May death slowly follow you!",
+        },
+        {
+          latin: "Flammae infernorum te consumant!",
+          english: "May the flames of hell consume you!",
+        },
+        {
+          latin: "Fortuna tua in pulverem redeat!",
+          english: "May your fortune turn to dust!",
+        },
+        {
+          latin: "Nullam pacem invenias!",
+          english: "May you never find peace!",
+        },
+        {
+          latin: "Sanguis tuus in venis congelescat!",
+          english: "May your blood freeze in your veins!",
+        },
+        {
+          latin: "Carcer aeternus animam tuam teneat!",
+          english: "May an eternal prison hold your soul!",
+        },
+        { latin: "Nemo umquam te amet!", english: "May no one ever love you!" },
+        {
+          latin: "Somnus tuus numquam tranquillus sit!",
+          english: "May your sleep never be peaceful!",
+        },
+        {
+          latin: "Pestis super te cadat!",
+          english: "May a plague fall upon you!",
+        },
+        {
+          latin: "Membra tua tremore percutiantur!",
+          english: "May your limbs be struck with trembling!",
+        },
+        {
+          latin: "Aeternum errorem patiaris!",
+          english: "May you suffer eternal confusion!",
+        },
+        {
+          latin: "Siccaretur terra sub pedibus tuis!",
+          english: "May the earth dry up beneath your feet!",
+        },
+        {
+          latin: "Umbra tua te prodere incipiat!",
+          english: "May your own shadow begin to betray you!",
+        },
+        {
+          latin: "Mens tua in perpetua caligine permaneat!",
+          english: "May your mind remain in eternal darkness!",
+        },
+        {
+          latin: "Manus tuae numquam firmam teneant!",
+          english: "May your hands never hold anything firm!",
+        },
+        {
+          latin: "Dentes tui in pulvere conterantur!",
+          english: "May your teeth grind into dust!",
+        },
+        {
+          latin: "Tempestas te secum auferat!",
+          english: "May the storm carry you away!",
+        },
+        {
+          latin: "Anima tua umquam requiescat!",
+          english: "May your soul never rest!",
+        },
+        {
+          latin: "Fames te semper torqueat!",
+          english: "May hunger always torment you!",
+        },
+        {
+          latin: "Tua spes evanescat sicut fumus!",
+          english: "May your hope vanish like smoke!",
+        },
+        {
+          latin: "Serpentes in somnis tuis te mordeant!",
+          english: "May serpents bite you in your dreams!",
+        },
+        {
+          latin: "Amici tui te deserant in tempore necessitatis!",
+          english: "May your friends abandon you in your time of need!",
+        },
+        {
+          latin: "Pellis tua squamis horreat!",
+          english: "May your skin bristle with scales!",
+        },
+        {
+          latin: "Labia tua numquam veritatem loquantur!",
+          english: "May your lips never speak the truth!",
+        },
+        {
+          latin: "Fatum tuum sit miseria sine fine!",
+          english: "May your fate be endless misery!",
+        },
+        {
+          latin: "Nec tibi pax nec requies concedatur!",
+          english: "May neither peace nor rest be granted to you!",
+        },
+        {
+          latin: "Dies tui tenebris obtegantur!",
+          english: "May your days be covered in darkness!",
+        },
+        {
+          latin: "Fortuna tua in cineres vertatur!",
+          english: "May your fortune turn to ashes!",
+        },
+        {
+          latin: "Vultus tuus deformetur ab ira deorum!",
+          english: "May your face be deformed by the wrath of the gods!",
+        },
+        {
+          latin: "Aeternam damnationem accipias!",
+          english: "May you receive eternal damnation!",
+        },
+        {
+          latin: "Gloria tua in oblivionem mergatur!",
+          english: "May your glory sink into oblivion!",
+        },
+        {
+          latin: "Spiritus tenebrarum te possideat!",
+          english: "May the spirits of darkness possess you!",
+        },
+        {
+          latin: "Lux vitae tuae in perpetuum exstinguatur!",
+          english: "May the light of your life be extinguished forever!",
+        },
+        {
+          latin: "Scelera tua numquam oblivioni tradantur!",
+          english: "May your crimes never be forgotten!",
+        },
+        {
+          latin: "Omnia quae amas pereant!",
+          english: "May all that you love perish!",
+        },
+        {
+          latin: "Umbrae tenebrosae animam tuam devorent!",
+          english: "May dark shadows devour your soul!",
+        },
+        {
+          latin: "Aqua in os tuum numquam redeat!",
+          english: "May water never return to your mouth!",
+        },
+        { latin: "Terra te respuit!", english: "The earth rejects you!" },
+        {
+          latin: "Mortem tuam numquam expectes!",
+          english: "May you never expect your death!",
+        },
+        {
+          latin: "Timor te semper teneat!",
+          english: "May fear always hold you!",
+        },
+        {
+          latin: "Somnia tua in horrenda vertantur!",
+          english: "May your dreams turn into nightmares!",
+        },
+        {
+          latin: "Tua ossea frigore contabescant!",
+          english: "May your bones rot from the cold!",
+        },
+        {
+          latin: "Dii antiqui adversum te consurgant!",
+          english: "May the ancient gods rise against you!",
+        },
+        {
+          latin: "Dies tui defluant sicut arena inter digitos!",
+          english: "May your days slip away like sand between your fingers!",
+        },
+        {
+          latin: "Aeternum solitudinem patiaris!",
+          english: "May you suffer eternal loneliness!",
+        },
+      ];
+
+      function generateCurse() {
+        const randomIndex = Math.floor(Math.random() * curses.length);
+        document.getElementById("curse").innerText = curses[randomIndex].latin;
+        document.getElementById("translation").innerText =
+          "(" + curses[randomIndex].english + ")";
+      }
+
+      function generateCurseForName() {
+        const name = document.getElementById("nameInput").value.trim();
+        if (name === "") {
+          alert("Please enter a name to curse!");
+          return;
+        }
+        const randomIndex = Math.floor(Math.random() * curses.length);
+        document.getElementById("curse").innerText =
+          name + ", " + curses[randomIndex].latin;
+        document.getElementById("translation").innerText =
+          "(" + name + ", " + curses[randomIndex].english + ")";
+      }
+    </script>
+  </body>
+</html>
